@@ -75,7 +75,7 @@ for index in range(700,701):
     #grid_magnetic_pressure = griddata(points, datain['bsq']/2., (grid_x, grid_y), method='linear')
     #grid_gas_pressure = griddata(points, gas_pressure, (grid_x, grid_y), method='linear')
     grid_u_magnitude = griddata(points, np.sqrt(u_radial*u_radial + u_theta*u_theta*g22*g22), (grid_x, grid_y), method='linear')
-    ux = (-u_theta*np.cos(theta)*r + u_radial*np.sin(theta))
+    ux = ()u_theta*np.cos(theta)*r + u_radial*np.sin(theta))
     uy = (-u_theta*np.sin(theta)*r + u_radial*np.cos(theta))
     grid_ux  = griddata(points, ux, (grid_x, grid_y), method='linear')
     grid_uy  = griddata(points, uy, (grid_x, grid_y), method='linear')
@@ -92,11 +92,11 @@ for index in range(700,701):
     plt.xlim(xmin=xmin, xmax=xmax)
     plt.ylim(ymin=ymin, ymax=ymax)
     
-    c = plt.contourf(grid_x, grid_y, np.log10(grid_rho), extend='both', levels=np.linspace(-25,-19,60), cmap='winter', alpha=0.5)
-    cax, args = matplotlib.colorbar.make_axes(ax, location='left', pad=0.125)
-    bar = fig.colorbar(c, cax=cax)
-    bar.ax.yaxis.set_ticks_position('left')
-    plt.sca(ax)
+    c = plt.contourf(grid_x, grid_y, np.log10(grid_rho), extend='both', levels=np.linspace(-25,-19,61), cmap='gray', alpha=0.5)
+    #cax, args = matplotlib.colorbar.make_axes(ax, location='left', pad=0.125)
+    bar = fig.colorbar(c)#, cax=cax)
+    #bar.ax.yaxis.set_ticks_position('left')
+    #plt.sca(ax)
     
     lw = 1+grid_u_magnitude*10.
     s = plt.streamplot(grid_x, grid_y, grid_ux, grid_uy, 
@@ -105,12 +105,13 @@ for index in range(700,701):
         minlength=.1, linewidth=lw)
         
     ax.set_aspect('equal')
-    plt.title('Density and velocites')
+    #plt.title('Density and velocites')
     plt.xlabel('$r/r_g$')
-    plt.ylabel('$r/r_g$')
+    #plt.ylabel('$r/r_g$')
+    plt.tick_params(axis='both', which='both', bottom='on', top='off', labelbottom='on', right='off', left='off', labelleft='off')
 
     fileout = '/Users/Anton/Dropbox/Aleksander/Figures/simavg0100-0189/density_velocities.png'
-    plt.savefig(fileout, bbox_inches='tight', bbox_extra_artists=[cax]) 
+    plt.savefig(fileout, bbox_inches='tight')#, bbox_extra_artists=[cax]) 
     
     fig.show()
 

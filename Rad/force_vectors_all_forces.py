@@ -294,7 +294,7 @@ for index in range(700,701):
     
     #c = plt.contourf(grid_x, grid_y, grid_u_magnitude, extend='both', levels=np.linspace(0,0.6,26), cmap='YlOrRd_r', alpha=0.3)
     #c = plt.contourf(grid_x, grid_y, grid_ehat, extend='both', levels=np.linspace(1e-20,9e-24,150), cmap='YlOrRd_r', alpha=0.3)
-    c = plt.contourf(grid_x, grid_y, np.log10(grid_bsq_rho), extend='both', levels=np.linspace(-3,1,21), cmap='YlOrRd_r', alpha=0.3)
+    c = plt.contourf(grid_x, grid_y, np.log10(grid_bsq_rho), extend='both', levels=np.linspace(-3,1,21), cmap='gray', alpha=0.3)
     plt.colorbar(c)
     
     plt.quiver(x,y,F_x,F_y, 
@@ -318,14 +318,14 @@ for index in range(700,701):
     #    minlength=.1)
         
     plt.gca().set_aspect('equal')    
-    plt.title(r'$B^2/ \rho~$ and force distribution')
+    #plt.title(r'$B^2/ \rho~$ and force distribution')
     plt.xlabel('$r/r_g$')
-    plt.ylabel('$r/r_g$')
-    plt.show()
+    #plt.ylabel('$r/r_g$')
+    plt.tick_params(axis='both', which='both', bottom='on', top='off', labelbottom='on', right='off', left='off', labelleft='off')
 
     fileout = '/Users/Anton/Dropbox/Aleksander/Figures/simavg0100-0189/all_forces.png'
     plt.savefig(fileout, bbox_inches='tight') 
-    
+    plt.show()
     #plt.savefig(fileout)
 
     

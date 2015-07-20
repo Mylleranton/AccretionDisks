@@ -24,7 +24,33 @@ def dataindex(x_loc,y_loc,datain_loc):
     angle = line_angle[4]
     return np.nanargmin((np.abs(datain_loc['r']-(radius)) + np.abs(datain_loc ['theta']-(angle))), axis=0)
     
+def plotforces():
+     plt.quiver(x,y,F_x,F_y, 
+            color=['blue', 'green', 'darkmagenta', 'red', 'cyan', 'black'], scale=.005)
+     plt.show()
 
+def plotarrows():
+    plt.figure()
+    plt.rc('text', usetex=True)
+    ypmin = 0
+    ypmax = 100
+    xpmin = 0
+    xpmax = 70
+        
+    plt.xlim(xmin=xpmin, xmax=xpmax)
+    plt.ylim(ymin=ypmin, ymax=ypmax)
+    
+    for i in range(0,len(COORDINATES)-1):
+        plt.arrow(COORDINATES[i,0], COORDINATES[i,1], (COORDINATES[i+1,0] - COORDINATES[i,0]), (COORDINATES[i+1,1] - COORDINATES[i,1]))
+        #if i%8==0:
+        #    plt.arrow(COORDINATES[i,0], COORDINATES[i,1], (COORDINATES[i+1,0] - COORDINATES[i,0]), (COORDINATES[i+1,1] - COORDINATES[i,1]), fc="k", ec="k", head_width=1.5, head_length=1)
+        #else:
+        #    plt.arrow(COORDINATES[i,0], COORDINATES[i,1], (COORDINATES[i+1,0] - COORDINATES[i,0]), (COORDINATES[i+1,1] - COORDINATES[i,1]))
+    
+    plt.gca().set_aspect('equal')    
+    plt.title('Particle trail')
+    plt.xlabel('$r/r_g$')
+    plt.ylabel('$r/r_g$')
 
 
 ymin = 0.#*1477000.
@@ -36,13 +62,13 @@ savefilename = '/Users/Anton/Desktop/Data/Binaries/hydro_particle_7_50.npy'
     
     
 #File operations
-filebase = '/Users/Anton/Desktop/Data/hd300a0/'
+filebase = '/Users/Anton/Desktop/Data/hd300a0/hd300a0_rel/'
 filenumber_start = 1000
 filenumber = filenumber_start
 
 try:
-    #filein = open(filebase + 'sim' + str(filenumber) + '.dat','rb')
-    filein = open(filebase + 'simavg0070-0134_rel.dat', 'rb')
+    filein = open(filebase + 'sim' + str(filenumber) + '.dat','rb')
+    #filein = open(filebase + 'simavg0070-0134_rel.dat', 'rb')
     datain = np.loadtxt(filein,fv.input_dtype.dtype_rel_hydro())
     filein.close()
 except IndexError:
@@ -120,7 +146,7 @@ for index3 in range(0,len(coord_index)):
     u_theta = (datain['u_2']/datain['u_t'])
     u_phi = (datain['u_3']/datain['u_t'])
         
-    line = LINE_INDEX[index3,0]
+    line = int(LINE_INDEX[index3,0])
     
     ####### Forces ########
     ## Gravitational force ##
@@ -210,3 +236,8 @@ for index3 in range(0,len(coord_index)):
         x = np.append(x, tmp_x, axis=0)
         y = np.append(y, tmp_y, axis=0) 
         print('LOOP2 F_x', np.shape(F_x), F_x, 'Index: ', index3)
+        
+        
+plotarrows()
+plotforces()
+        

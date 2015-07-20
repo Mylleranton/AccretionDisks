@@ -26,8 +26,8 @@ ymax = 100.#*1477000.
 xmin = 0.#*1477000.
 xmax = 100.#*1477000.
 resolution = 100.
-savefilename = '/Users/Anton/Desktop/Data/Binaries/hydro_particle_50_20.npy'
-onlyplot = True
+savefilename = '/Users/Anton/Desktop/Data/Binaries/hydro_particle_5_50.npy'
+onlyplot = False
 
 
 def plotarrows():
@@ -54,30 +54,32 @@ def plotarrows():
     plt.ylabel('$r/r_g$')
     plt.show()
     
-def iterate():
-    grid_y, grid_x = np.mgrid[ymin:ymax:100j,xmin:xmax:100j]
-    grid_y = grid_y
-    grid_x = grid_x
+def iterate():  
     
+    #grid_y, grid_x = np.mgrid[ymin:ymax:100j,xmin:xmax:100j]
+  
     starting_index    = 1000
-    last_index        = 1086 
+    last_index        = 1310 
     TIME_INTERVAL     = 10.
-    START_x           = get_coordinate(15)
-    START_y           = get_coordinate(35)
+    START_x           = get_coordinate(7)
+    START_y           = get_coordinate(50)
     COORDINATES       = np.array([[START_x, START_y]])
     
     coord_x = START_x
     coord_y = START_y
     
     for fileindex in range(starting_index,last_index):
-    
+        
+        grid_y, grid_x = np.mgrid[coord_y:coord_y:1j,coord_x:coord_x:1j]
+
+        
         if fileindex < 1000:
             filename = '0' + str(fileindex)
         else:
             filename = str(fileindex)
         
         
-        filein = open('/Users/Anton/Desktop/Data/hd300a0/sim' + filename + '.dat')
+        filein = open('/Users/Anton/Desktop/Data/hd300a0/hd300a0_rel/sim' + filename + '.dat')
         datain = np.loadtxt(filein,input_dtype.dtype_newtonian())
         filein.close()
         a         = 0
@@ -90,22 +92,29 @@ def iterate():
         g22 = np.sqrt((np.power(r,2)+a**(2.)*np.power(np.cos(theta),2)))
         
         points = (r*np.sin(theta),r*np.cos(theta))
-        ux = (-u_theta*np.cos(theta)*g22 + u_radial*np.sin(theta))
+        ux = (u_theta*np.cos(theta)*g22 + u_radial*np.sin(theta))
         uy = (-u_theta*np.sin(theta)*g22 + u_radial*np.cos(theta))
         
         grid_ux = griddata(points, ux, (grid_x, grid_y), method='linear', fill_value=1e-30)
         grid_uy = griddata(points, uy, (grid_x, grid_y), method='linear', fill_value=1e-30)
         try: 
-            DELTA_x = grid_ux[get_coordinate(coord_y), get_coordinate(coord_x)]*TIME_INTERVAL
-            DELTA_y = grid_uy[get_coordinate(coord_y), get_coordinate(coord_x)]*TIME_INTERVAL
+            DELTA_x = grid_ux[0,0]*TIME_INTERVAL
+            DELTA_y = grid_uy[0,0]*TIME_INTERVAL
+            
+            #DELTA_x = grid_ux[get_coordinate(coord_y), get_coordinate(coord_x)]*TIME_INTERVAL
+            #DELTA_y = grid_uy[get_coordinate(coord_y), get_coordinate(coord_x)]*TIME_INTERVAL
             
             coord_x = coord_x + DELTA_x
             coord_y = coord_y + DELTA_y
             
+            if (np.logical_or(coord_x > xmax, coord_y > ymax)):
+                print('The particle have escaped the bounded region. Terminating loop at index ' + str(fileindex))
+                break
+
             COORDINATES = np.append(COORDINATES, np.array([[coord_x, coord_y]]), axis=0)
         except IndexError:
             np.save(savefilename, COORDINATES)
-            print('The particle have escaped the bounded region. Terminating loop...')
+            print('IndexError: The particle have escaped the bounded region. Terminating loop at index ' + str(fileindex))
             break
             
         print('Index:', fileindex, COORDINATES)

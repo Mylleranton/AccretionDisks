@@ -58,7 +58,7 @@ ymax = 100
 xmin = 0
 xmax = 100
 
-grid_y, grid_x = np.mgrid[ymin:ymax:150j,xmin:xmax:150j]
+grid_y, grid_x = np.mgrid[ymin:ymax:200j,xmin:xmax:200j]
 grid_y = grid_y
 grid_x = grid_x
 
@@ -73,7 +73,7 @@ for index in range(700,701):
     
     #File operations
     filename = 'sim' + index_str
-    filein = open('/Users/Anton/Desktop/Data/hd300a0/simavg0070-0134_rel.dat','rb')
+    filein = open('/Users/Anton/Desktop/Data/hd300a0/hd300a0_rel/simavg0070-0134_rel.dat','rb')
     #filein = open('/Volumes/Seagate/4Anton/d300a0/' + filename + '.dat','rb')
     #datafile_all_forces = '/Users/Anton/Desktop/Data/Binaries/RAD-600-d300a0/' + index_str + '.npy'
     #datafile_all_forces = '/Users/Anton/Desktop/Data/Binaries/RAD-avg-d300a0/average.npy'
@@ -281,7 +281,7 @@ for index in range(700,701):
     
     #c = plt.contourf(grid_x, grid_y, grid_u_magnitude, extend='both', levels=np.linspace(0,0.1,26), cmap='YlOrRd_r', alpha=0.3)
     #c = plt.contourf(grid_x, grid_y, grid_ehat, extend='both', levels=np.linspace(1e-20,9e-24,150), cmap='YlOrRd_r', alpha=0.3)
-    c = plt.contourf(grid_x, grid_y, np.log10(grid_bsq_rho), extend='both', levels=np.linspace(-3,1,21), cmap='YlOrRd_r', alpha=0.3)
+    c = plt.contourf(grid_x, grid_y, np.log10(grid_bsq_rho), extend='both', levels=np.linspace(-3,1,21), cmap='gray', alpha=0.3)
     plt.colorbar(c)
     
     plt.quiver(x,y,F_x,F_y, 
@@ -304,9 +304,11 @@ for index in range(700,701):
     #    minlength=.1)
         
     plt.gca().set_aspect('equal')    
-    plt.title(r'$B^2/ \rho~$ and force distribution')
+    #plt.title(r'$B^2/ \rho~$ and force distribution')
     plt.xlabel('$r/r_g$')
-    plt.ylabel('$r/r_g$')
+    #plt.ylabel('$r/r_g$')
+    plt.tick_params(axis='both', which='both', bottom='on', top='off', labelbottom='on', right='off', left='off', labelleft='off')
+    
     plt.show()
 
     fileout = '/Users/Anton/Dropbox/Aleksander/Figures/simavg0070-0134/all_forces.png'
