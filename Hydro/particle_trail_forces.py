@@ -26,8 +26,9 @@ def dataindex(x_loc,y_loc,datain_loc):
     
 def plotforces():
      plt.quiver(x,y,F_x,F_y, 
-            color=['blue', 'green', 'darkmagenta', 'red', 'cyan', 'black'], scale=.005)
+            color=['blue', 'green', 'darkmagenta', 'red', 'cyan', 'black'], scale=.01)
      plt.show()
+     plt.savefig('/Users/Anton/Dropbox/Aleksander/Figures/simavg0070-0134/particles/particle_forces_'+ str(gSTART_x)+'_'+str(gSTART_y), bbox_inces='tight')
 
 def plotarrows():
     plt.figure()
@@ -48,7 +49,7 @@ def plotarrows():
         #    plt.arrow(COORDINATES[i,0], COORDINATES[i,1], (COORDINATES[i+1,0] - COORDINATES[i,0]), (COORDINATES[i+1,1] - COORDINATES[i,1]))
     
     plt.gca().set_aspect('equal')    
-    plt.title('Particle trail')
+    plt.title('Particle trail with forces')
     plt.xlabel('$r/r_g$')
     plt.ylabel('$r/r_g$')
 
@@ -58,8 +59,12 @@ ymax = 100.#*1477000.
 xmin = 0.#*1477000.
 xmax = 100.#*1477000.
 resolution = 100.
-savefilename = '/Users/Anton/Desktop/Data/Binaries/hydro_particle_7_50.npy'
-    
+
+gSTART_x = 15
+gSTART_y = 30
+
+savefilename = '/Users/Anton/Desktop/Data/Binaries/hydro_particle_'+ str(gSTART_x)+'_'+str(gSTART_y)+'.npy'
+
     
 #File operations
 filebase = '/Users/Anton/Desktop/Data/hd300a0/hd300a0_rel/'
@@ -77,7 +82,7 @@ except IndexError:
     
 COORDINATES = np.load(savefilename)
 step = len(COORDINATES)/4.
-coord_index = np.floor(np.array([0, step, 2.*step, 3.*step, 4*step-1]))
+coord_index = np.floor(np.array([0, 2.*step, 4*step-1]))
 LINE_INDEX = np.empty((len(coord_index), 1))
 for i in range(0,len(coord_index)):
     tmp = COORDINATES[coord_index[i]]
@@ -182,8 +187,14 @@ for index3 in range(0,len(coord_index)):
     F_correction_theta = F_rel_corr_theta + F_enth_corr_theta
     F_correction_x = F_correction_radial*np.sin(theta) + F_correction_theta*np.cos(theta)
     F_correction_y = F_correction_radial*np.cos(theta) - F_correction_theta*np.sin(theta)
-    print('Non-zero test:', (F_metric_radial[line] - (1./w[line])*((T00*ch(r,theta,a,0,1,0))[line] + (T11*ch(r,theta,a,1,1,1))[line] + (T22*ch(r,theta,a,2,1,2))[line] + (T33*ch(r,theta,a,3,1,3))[line]) + (((1./w[line])*((T11-rho*u_radial*u_radial*g11)*(2./r)))[line] + ((1./w[line])*((T21-rho*u_theta*u_radial*g11)*(np.cos(theta)/np.sin(theta))))[line])
-    ))
+    
+    zero_test = (F_metric_radial[line] - (1./w[line])*((T00*ch(r,theta,a,0,1,0))[line] + (T11*ch(r,theta,a,1,1,1))[line] + (T22*ch(r,theta,a,2,1,2))[line] + (T33*ch(r,theta,a,3,1,3))[line]) + (((1./w[line])*((T11-rho*u_radial*u_radial*g11)*(2./r)))[line] + ((1./w[line])*((T21-rho*u_theta*u_radial*g11)*(np.cos(theta)/np.sin(theta))))[line]))
+    
+    if (zero_test > 1.e-15):
+        print('Non-zero test failed: Line: ' + str(line) + ', with the non-zero-test: ' + str(zero_test))
+        print('Terminating script...')
+        break
+    
     ## Thermal force (gas pressure) ##
     gas_pressure = ((5./3.)-1.)*datain['u_internal']
     F_pressure_radial = -(1./w)*fv.gradient_radial(gas_pressure, line)
@@ -218,7 +229,7 @@ for index3 in range(0,len(coord_index)):
         F_y[3] = F_centrifugal_y[line]
         F_y[4] = F_correction_y[line]
         F_y[NUMBER_OF_FORCES-1] = F_total_y[line]
-        print('LOOP1: F_x', np.shape(F_x), F_x, 'Index: ', index3)
+        #print('LOOP1: F_x', np.shape(F_x), F_x, 'Index: ', index3)
         
         x[0:NUMBER_OF_FORCES] = r[line]*np.sin(theta[line])
         y[0:NUMBER_OF_FORCES] = r[line]*np.cos(theta[line])
@@ -235,7 +246,7 @@ for index3 in range(0,len(coord_index)):
         F_y = np.append(F_y, tmp_Fy, axis=0)  
         x = np.append(x, tmp_x, axis=0)
         y = np.append(y, tmp_y, axis=0) 
-        print('LOOP2 F_x', np.shape(F_x), F_x, 'Index: ', index3)
+        #print('LOOP2 F_x', np.shape(F_x), F_x, 'Index: ', index3)
         
         
 plotarrows()

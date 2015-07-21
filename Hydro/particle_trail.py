@@ -26,8 +26,11 @@ ymax = 100.#*1477000.
 xmin = 0.#*1477000.
 xmax = 100.#*1477000.
 resolution = 100.
-savefilename = '/Users/Anton/Desktop/Data/Binaries/hydro_particle_5_50.npy'
-onlyplot = False
+gSTART_x = 50
+gSTART_y = 30
+
+savefilename = '/Users/Anton/Desktop/Data/Binaries/hydro_particle_'+ str(gSTART_x)+'_'+str(gSTART_y)+'.npy'
+onlyplot = True
 
 
 def plotarrows():
@@ -43,7 +46,7 @@ def plotarrows():
     plt.ylim(ymin=ypmin, ymax=ypmax)
     
     for i in range(0,len(COORDINATES)-1):
-        if i%2==0:
+        if i%8==0:
             plt.arrow(COORDINATES[i,0], COORDINATES[i,1], (COORDINATES[i+1,0] - COORDINATES[i,0]), (COORDINATES[i+1,1] - COORDINATES[i,1]), fc="k", ec="k", head_width=1.5, head_length=1)
         else:
             plt.arrow(COORDINATES[i,0], COORDINATES[i,1], (COORDINATES[i+1,0] - COORDINATES[i,0]), (COORDINATES[i+1,1] - COORDINATES[i,1]))
@@ -53,6 +56,8 @@ def plotarrows():
     plt.xlabel('$r/r_g$')
     plt.ylabel('$r/r_g$')
     plt.show()
+    plt.savefig('/Users/Anton/Dropbox/Aleksander/Figures/simavg0070-0134/particles/particle_'+ str(gSTART_x)+'_'+str(gSTART_y), bbox_inches='tight') 
+
     
 def iterate():  
     
@@ -61,8 +66,8 @@ def iterate():
     starting_index    = 1000
     last_index        = 1310 
     TIME_INTERVAL     = 10.
-    START_x           = get_coordinate(7)
-    START_y           = get_coordinate(50)
+    START_x           = get_coordinate(gSTART_x)
+    START_y           = get_coordinate(gSTART_y)
     COORDINATES       = np.array([[START_x, START_y]])
     
     coord_x = START_x
@@ -110,7 +115,10 @@ def iterate():
             if (np.logical_or(coord_x > xmax, coord_y > ymax)):
                 print('The particle have escaped the bounded region. Terminating loop at index ' + str(fileindex))
                 break
-
+            elif (np.logical_and(coord_x < 2, coord_y < 2)):
+                print('The particle have been engulfed by the black hole. Terminating loop at index ' + str(fileindex))
+                break
+                
             COORDINATES = np.append(COORDINATES, np.array([[coord_x, coord_y]]), axis=0)
         except IndexError:
             np.save(savefilename, COORDINATES)
