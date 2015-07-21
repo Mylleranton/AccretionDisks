@@ -75,7 +75,7 @@ for index in range(700,701):
     #grid_magnetic_pressure = griddata(points, datain['bsq']/2., (grid_x, grid_y), method='linear')
     #grid_gas_pressure = griddata(points, gas_pressure, (grid_x, grid_y), method='linear')
     grid_u_magnitude = griddata(points, np.sqrt(u_radial*u_radial + u_theta*u_theta*g22*g22), (grid_x, grid_y), method='linear')
-    ux = ()u_theta*np.cos(theta)*r + u_radial*np.sin(theta))
+    ux = (u_theta*np.cos(theta)*r + u_radial*np.sin(theta))
     uy = (-u_theta*np.sin(theta)*r + u_radial*np.cos(theta))
     grid_ux  = griddata(points, ux, (grid_x, grid_y), method='linear')
     grid_uy  = griddata(points, uy, (grid_x, grid_y), method='linear')
