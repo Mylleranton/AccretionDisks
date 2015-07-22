@@ -84,7 +84,7 @@ for index in range(700,701):
     datain = np.loadtxt(filein,input_dtype.dtype_rel_radiation())
     filein.close()
     #datain = datain[0:10000]
-    LINE_INDEX = np.array([dataindex(200, 200), dataindex(100,20), dataindex(100,50), dataindex(100,85),  dataindex(130, 10), dataindex(130, 30),  dataindex(130, 55), dataindex(130, 85), dataindex(145, 10), dataindex(145, 30), dataindex(145, 55),  dataindex(145, 85), dataindex(155,10),dataindex(155,30)])
+    LINE_INDEX = np.array([dataindex(200, 200), dataindex(100,20), dataindex(100,50), dataindex(100,85),  dataindex(130, 10), dataindex(130, 30),  dataindex(130, 55), dataindex(130, 85), dataindex(145, 10), dataindex(145, 30), dataindex(145, 55),  dataindex(145, 85),dataindex(155,30)])
     NUMBER_OF_FORCES = 1
    
     ########### ------------------------------------------------------------------------------------ ###########
@@ -278,8 +278,8 @@ for index in range(700,701):
     plt.xlim(xmin=xmin, xmax=xmax)
     plt.ylim(ymin=ymin, ymax=ymax)
     
-    c = plt.contourf(grid_x, grid_y, grid_u_magnitude, extend='both', levels=np.linspace(0,0.4,76), cmap='cool', alpha=0.3)
-    plt.colorbar(c)
+    c = plt.contourf(grid_x, grid_y, grid_u_magnitude, extend='both', levels=np.linspace(0,0.4,41), cmap='gray', alpha=0.4)
+    plt.colorbar(c, ticks=np.linspace(0,0.4,11))
     
 
     #x = r[LINE_INDEX]*np.sin(theta[LINE_INDEX])
@@ -289,7 +289,7 @@ for index in range(700,701):
     #F_y = np.array([F_gravity_y[LINE_INDEX], F_pressure_y[LINE_INDEX], F_magnetic_y[LINE_INDEX],                         0, F_total_y[LINE_INDEX]])
     
     plt.quiver(x,y,F_x,F_y, 
-            color=['#444444'], scale=7.5, width=0.015)
+            color=['red'], scale=7.5, width=0.015)
     
     #p1 = mline.Line2D([], [], color='blue', label='Gravity')
     #p2 = mline.Line2D([], [], color='green', label='Thermal')
@@ -306,10 +306,11 @@ for index in range(700,701):
     #    arrowsize=2.5, arrowstyle='->',
     #    minlength=.1, linewidth=lw)
         
-    plt.gca().set_aspect('equal')
-    plt.title('Velocity and net force')
+    plt.gca().set_aspect('equal')    
+    #plt.title('Velocity and net force')
     plt.xlabel('$r/r_g$')
-    plt.ylabel('$r/r_g$')
+    #plt.ylabel('$r/r_g$')
+    plt.tick_params(axis='both', which='both', bottom='on', top='off', labelbottom='on', right='off', left='off', labelleft='off')
 
     fileout = '/Users/Anton/Dropbox/Aleksander/Figures/simavg0100-0189/net_force.png'
     plt.savefig(fileout, bbox_inches='tight')     

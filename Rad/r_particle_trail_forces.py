@@ -26,9 +26,9 @@ def dataindex(x_loc,y_loc,datain_loc):
     
 def plotforces():
      plt.quiver(x,y,F_x,F_y, 
-            color=['blue', 'green', 'darkmagenta', 'red', 'cyan', '#00FF00' , 'black'], scale=.01)
+            color=['blue', 'green', 'darkmagenta', 'red', 'cyan', '#00FF00' , 'black'], scale=.2)
      plt.show()
-     plt.savefig('/Users/Anton/Dropbox/Aleksander/Figures/simavg0100-0189/particles/particle_forces_'+ str(gSTART_x)+'_'+str(gSTART_y), bbox_inces='tight')
+     plt.savefig('/Users/Anton/Dropbox/Aleksander/Figures/simavg0100-0189/particles/particle_forces_'+ str(gSTART_x)+'_'+str(gSTART_y), bbox_inches='tight')
 
 def plotarrows():
     plt.figure()
@@ -42,14 +42,14 @@ def plotarrows():
     plt.ylim(ymin=ypmin, ymax=ypmax)
     
     for i in range(0,len(COORDINATES)-1):
-        plt.arrow(COORDINATES[i,0], COORDINATES[i,1], (COORDINATES[i+1,0] - COORDINATES[i,0]), (COORDINATES[i+1,1] - COORDINATES[i,1]))
+        plt.arrow(COORDINATES[i,0], COORDINATES[i,1], (COORDINATES[i+1,0] - COORDINATES[i,0]), (COORDINATES[i+1,1] - COORDINATES[i,1]), linestyle='dotted')
         #if i%8==0:
         #    plt.arrow(COORDINATES[i,0], COORDINATES[i,1], (COORDINATES[i+1,0] - COORDINATES[i,0]), (COORDINATES[i+1,1] - COORDINATES[i,1]), fc="k", ec="k", head_width=1.5, head_length=1)
         #else:
         #    plt.arrow(COORDINATES[i,0], COORDINATES[i,1], (COORDINATES[i+1,0] - COORDINATES[i,0]), (COORDINATES[i+1,1] - COORDINATES[i,1]))
     
     plt.gca().set_aspect('equal')    
-    plt.title('Particle trail with forces')
+    plt.title('Trajectory over time: ' + str(len(COORDINATES)*10))
     plt.xlabel('$r/r_g$')
     plt.ylabel('$r/r_g$')
 
@@ -60,8 +60,8 @@ xmin = 0.#*1477000.
 xmax = 100.#*1477000.
 resolution = 100.
 
-gSTART_x = 15
-gSTART_y = 30
+gSTART_x = 5
+gSTART_y = 15
 
 savefilename = '/Users/Anton/Desktop/Data/Binaries/radiative_particle_'+ str(gSTART_x)+'_'+str(gSTART_y)+'.npy'
 
@@ -74,7 +74,7 @@ filenumber = filenumber_start
 try:
     filein = open(filebase + 'sim' + str(filenumber) + '.dat','rb')
     #filein = open(filebase + 'simavg0070-0134_rel.dat', 'rb')
-    datain = np.loadtxt(filein,fv.input_dtype.dtype_rel_hydro())
+    datain = np.loadtxt(filein,fv.input_dtype.dtype_rel_radiation())
     filein.close()
 except IndexError:
     print('Wrong input dtype. Terminating.')
@@ -82,7 +82,7 @@ except IndexError:
     
 COORDINATES = np.load(savefilename)
 step = len(COORDINATES)/4.
-coord_index = np.floor(np.array([0, 2.*step, 4*step-1]))
+coord_index = np.floor(np.array([1.75*step, 3*step]))
 LINE_INDEX = np.empty((len(coord_index), 1))
 for i in range(0,len(coord_index)):
     tmp = COORDINATES[coord_index[i]]

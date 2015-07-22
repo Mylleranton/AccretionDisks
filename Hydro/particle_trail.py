@@ -26,11 +26,11 @@ ymax = 100.#*1477000.
 xmin = 0.#*1477000.
 xmax = 100.#*1477000.
 resolution = 100.
-gSTART_x = 50
-gSTART_y = 30
+gSTART_x = 10
+gSTART_y = 45
 
 savefilename = '/Users/Anton/Desktop/Data/Binaries/hydro_particle_'+ str(gSTART_x)+'_'+str(gSTART_y)+'.npy'
-onlyplot = True
+onlyplot = False
 
 
 def plotarrows():

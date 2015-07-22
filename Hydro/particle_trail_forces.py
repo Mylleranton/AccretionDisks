@@ -26,9 +26,9 @@ def dataindex(x_loc,y_loc,datain_loc):
     
 def plotforces():
      plt.quiver(x,y,F_x,F_y, 
-            color=['blue', 'green', 'darkmagenta', 'red', 'cyan', 'black'], scale=.01)
+            color=['blue', 'green', 'darkmagenta', 'red', 'cyan', 'black'], scale=.03)
      plt.show()
-     plt.savefig('/Users/Anton/Dropbox/Aleksander/Figures/simavg0070-0134/particles/particle_forces_'+ str(gSTART_x)+'_'+str(gSTART_y), bbox_inces='tight')
+     plt.savefig('/Users/Anton/Dropbox/Aleksander/Figures/simavg0070-0134/particles/particle_forces_'+ str(gSTART_x)+'_'+str(gSTART_y), bbox_inches='tight')
 
 def plotarrows():
     plt.figure()
@@ -49,7 +49,7 @@ def plotarrows():
         #    plt.arrow(COORDINATES[i,0], COORDINATES[i,1], (COORDINATES[i+1,0] - COORDINATES[i,0]), (COORDINATES[i+1,1] - COORDINATES[i,1]))
     
     plt.gca().set_aspect('equal')    
-    plt.title('Particle trail with forces')
+    plt.title('Trajectory over time: ' + str(len(COORDINATES)*10))
     plt.xlabel('$r/r_g$')
     plt.ylabel('$r/r_g$')
 
@@ -60,8 +60,8 @@ xmin = 0.#*1477000.
 xmax = 100.#*1477000.
 resolution = 100.
 
-gSTART_x = 15
-gSTART_y = 30
+gSTART_x = 10
+gSTART_y = 45
 
 savefilename = '/Users/Anton/Desktop/Data/Binaries/hydro_particle_'+ str(gSTART_x)+'_'+str(gSTART_y)+'.npy'
 
@@ -82,7 +82,7 @@ except IndexError:
     
 COORDINATES = np.load(savefilename)
 step = len(COORDINATES)/4.
-coord_index = np.floor(np.array([0, 2.*step, 4*step-1]))
+coord_index = np.floor(np.array([1*step, 4*step-5]))
 LINE_INDEX = np.empty((len(coord_index), 1))
 for i in range(0,len(coord_index)):
     tmp = COORDINATES[coord_index[i]]
