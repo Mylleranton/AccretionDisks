@@ -14,7 +14,7 @@ def dataindex(ix, iy):
     #return datain[np.logical_and(r == radius, theta == angle)]
 
 def get_coordinate(coord):
-    return (resolution/xmax)*coord
+    return (float(resolution)/float(xmax))*float(coord)
 
 matplotlib.rcdefaults()
 matplotlib.rc('font',**{'family':'serif','size':16})
@@ -26,11 +26,13 @@ ymax = 100.#*1477000.
 xmin = 0.#*1477000.
 xmax = 100.#*1477000.
 resolution = 100.
-gSTART_x = 10
-gSTART_y = 45
+gSTART_x = 20
+gSTART_y = 30
+gSTART_INDEX = 1000
+gLAST_INDEX = 1350
 
-savefilename = '/Users/Anton/Desktop/Data/Binaries/hydro_particle_'+ str(gSTART_x)+'_'+str(gSTART_y)+'.npy'
-onlyplot = False
+savefilename = '/Users/Anton/Desktop/Data/Binaries/hydro_particle_' + str(gSTART_INDEX) + '_' + str(gSTART_x)+'_'+str(gSTART_y)+'.npy'
+onlyplot = True
 
 
 def plotarrows():
@@ -46,34 +48,37 @@ def plotarrows():
     plt.ylim(ymin=ypmin, ymax=ypmax)
     
     for i in range(0,len(COORDINATES)-1):
-        if i%8==0:
-            plt.arrow(COORDINATES[i,0], COORDINATES[i,1], (COORDINATES[i+1,0] - COORDINATES[i,0]), (COORDINATES[i+1,1] - COORDINATES[i,1]), fc="k", ec="k", head_width=1.5, head_length=1)
+        lw = 1+COORDINATES[i,2]*10.
+        if i%2==0:
+            plt.arrow(COORDINATES[i,0], COORDINATES[i,1], (COORDINATES[i+1,0] - COORDINATES[i,0]), (COORDINATES[i+1,1] - COORDINATES[i,1]), fc="k", ec="k", head_width=1.5, head_length=1, linewidth=lw)
         else:
-            plt.arrow(COORDINATES[i,0], COORDINATES[i,1], (COORDINATES[i+1,0] - COORDINATES[i,0]), (COORDINATES[i+1,1] - COORDINATES[i,1]))
+            plt.arrow(COORDINATES[i,0], COORDINATES[i,1], (COORDINATES[i+1,0] - COORDINATES[i,0]), (COORDINATES[i+1,1] - COORDINATES[i,1]), linewidth=lw)
     
     plt.gca().set_aspect('equal')    
-    plt.title('Particle trail')
+    plt.title('Trajectory over time: ' + str(len(COORDINATES)*100))
     plt.xlabel('$r/r_g$')
     plt.ylabel('$r/r_g$')
     plt.show()
-    plt.savefig('/Users/Anton/Dropbox/Aleksander/Figures/simavg0070-0134/particles/particle_'+ str(gSTART_x)+'_'+str(gSTART_y), bbox_inches='tight') 
+    plt.savefig('/Users/Anton/Dropbox/Aleksander/Figures/simavg0070-0134/particles/particle_'+ str(gSTART_INDEX) +'_'+ str(gSTART_x)+'_'+str(gSTART_y), bbox_inches='tight') 
 
     
 def iterate():  
     
     #grid_y, grid_x = np.mgrid[ymin:ymax:100j,xmin:xmax:100j]
   
-    starting_index    = 1000
-    last_index        = 1310 
-    TIME_INTERVAL     = 10.
+    starting_index    = gSTART_INDEX
+    last_index        = gLAST_INDEX 
+    TIME_INTERVAL     = 100.
     START_x           = get_coordinate(gSTART_x)
     START_y           = get_coordinate(gSTART_y)
-    COORDINATES       = np.array([[START_x, START_y]])
+    COORDINATES       = np.array([[START_x, START_y, 0]])
     
     coord_x = START_x
     coord_y = START_y
     
     for fileindex in range(starting_index,last_index):
+    #for loop_index in range(0,20):    
+     #   fileindex = starting_index - loop_index
         
         grid_y, grid_x = np.mgrid[coord_y:coord_y:1j,coord_x:coord_x:1j]
 
@@ -85,7 +90,7 @@ def iterate():
         
         
         filein = open('/Users/Anton/Desktop/Data/hd300a0/hd300a0_rel/sim' + filename + '.dat')
-        datain = np.loadtxt(filein,input_dtype.dtype_newtonian())
+        datain = np.loadtxt(filein,input_dtype.dtype_rel_hydro())
         filein.close()
         a         = 0
         r         = datain['r']#*1477000.
@@ -119,7 +124,7 @@ def iterate():
                 print('The particle have been engulfed by the black hole. Terminating loop at index ' + str(fileindex))
                 break
                 
-            COORDINATES = np.append(COORDINATES, np.array([[coord_x, coord_y]]), axis=0)
+            COORDINATES = np.append(COORDINATES, np.array([[coord_x, coord_y, np.sqrt(grid_ux[0,0]**(2.) + grid_uy[0,0]**(2.))]]), axis=0)
         except IndexError:
             np.save(savefilename, COORDINATES)
             print('IndexError: The particle have escaped the bounded region. Terminating loop at index ' + str(fileindex))

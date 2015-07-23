@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import matplotlib.lines as mline
+from matplotlib.collections import LineCollection
 import matplotlib
 import os
 import numpy as np
@@ -10,8 +11,6 @@ matplotlib.rcdefaults()
 matplotlib.rc('font',**{'family':'serif','size':16})
 os.environ['PATH'] = os.environ['PATH'] + ':/opt/local/bin'
 os.environ['PATH']
-
-
 
 def dataindex(x_loc,y_loc,datain_loc):
     x_loc = float(x_loc)
@@ -26,23 +25,36 @@ def dataindex(x_loc,y_loc,datain_loc):
     
 def plotforces():
      plt.quiver(x,y,F_x,F_y, 
-            color=['blue', 'green', 'darkmagenta', 'red', 'cyan', 'black'], scale=.03)
-     plt.show()
-     plt.savefig('/Users/Anton/Dropbox/Aleksander/Figures/simavg0070-0134/particles/particle_forces_'+ str(gSTART_x)+'_'+str(gSTART_y), bbox_inches='tight')
+            color=['blue', 'green', 'darkmagenta', 'red', 'cyan', 'black'], scale=5)
+     #plt.show()
+     plt.savefig('/Users/Anton/Dropbox/Aleksander/Figures/simavg0070-0134/particles/particle_forces_' + str(gSTART_INDEX) + '_' + str(gSTART_x)+'_'+str(gSTART_y)+ '_dt10', bbox_inches='tight')
 
 def plotarrows():
     plt.figure()
     plt.rc('text', usetex=True)
     ypmin = 0
     ypmax = 100
-    xpmin = 0
+    xpmin = 20
     xpmax = 70
         
     plt.xlim(xmin=xpmin, xmax=xpmax)
     plt.ylim(ymin=ypmin, ymax=ypmax)
     
-    for i in range(0,len(COORDINATES)-1):
-        plt.arrow(COORDINATES[i,0], COORDINATES[i,1], (COORDINATES[i+1,0] - COORDINATES[i,0]), (COORDINATES[i+1,1] - COORDINATES[i,1]))
+    tmp_array = COORDINATES[:,0:2].reshape(-1,1,2)
+    segments = np.concatenate([tmp_array[:-1], tmp_array[1:]], axis=1)
+        
+    lw = 0.1+COORDINATES[:,2]*200.
+    lc = LineCollection(segments, linewidths=lw, colors=['grey']) #, cmap='gist_heat_r')
+    #lc.set_array(lw)
+    plt.gca().add_collection(lc)
+    
+    
+    #lw = 0.5+COORDINATES[:,2]*100.
+    #plt.plot(COORDINATES[:,0], COORDINATES[:,1], color='black', lw=lw)
+    
+    #for i in range(0,len(COORDINATES)-1):
+    #    lw = 0.1+COORDINATES[i,2]*100.
+    #    plt.arrow(COORDINATES[i,0], COORDINATES[i,1], (COORDINATES[i+1,0] - COORDINATES[i,0]), (COORDINATES[i+1,1] - COORDINATES[i,1]), linewidth=lw)
         #if i%8==0:
         #    plt.arrow(COORDINATES[i,0], COORDINATES[i,1], (COORDINATES[i+1,0] - COORDINATES[i,0]), (COORDINATES[i+1,1] - COORDINATES[i,1]), fc="k", ec="k", head_width=1.5, head_length=1)
         #else:
@@ -60,15 +72,16 @@ xmin = 0.#*1477000.
 xmax = 100.#*1477000.
 resolution = 100.
 
-gSTART_x = 10
-gSTART_y = 45
+gSTART_x = 40
+gSTART_y = 30
+gSTART_INDEX = 1000
 
-savefilename = '/Users/Anton/Desktop/Data/Binaries/hydro_particle_'+ str(gSTART_x)+'_'+str(gSTART_y)+'.npy'
+savefilename = '/Users/Anton/Desktop/Data/Binaries/hydro_particle_'+str(gSTART_INDEX)+ '_' + str(gSTART_x)+'_'+str(gSTART_y)+'.npy'
 
     
 #File operations
 filebase = '/Users/Anton/Desktop/Data/hd300a0/hd300a0_rel/'
-filenumber_start = 1000
+filenumber_start = gSTART_INDEX
 filenumber = filenumber_start
 
 try:
@@ -82,7 +95,7 @@ except IndexError:
     
 COORDINATES = np.load(savefilename)
 step = len(COORDINATES)/4.
-coord_index = np.floor(np.array([1*step, 4*step-5]))
+coord_index = np.floor(np.array([0.75*step, 1.5*step, 2.25*step, 3.*step]))
 LINE_INDEX = np.empty((len(coord_index), 1))
 for i in range(0,len(coord_index)):
     tmp = COORDINATES[coord_index[i]]
@@ -230,12 +243,16 @@ for index3 in range(0,len(coord_index)):
         F_y[4] = F_correction_y[line]
         F_y[NUMBER_OF_FORCES-1] = F_total_y[line]
         #print('LOOP1: F_x', np.shape(F_x), F_x, 'Index: ', index3)
+        F_x = F_x*(r[line]**(2.))
+        F_y = F_y*(r[line]**(2.))
         
         x[0:NUMBER_OF_FORCES] = r[line]*np.sin(theta[line])
         y[0:NUMBER_OF_FORCES] = r[line]*np.cos(theta[line])
     else:
         tmp_Fx = np.array([[F_gravity_x[line]], [F_pressure_x[line]], [F_magnetic_x[line]], [F_centrifugal_x[line]], [F_correction_x[line]], [F_total_x[line]]] )
         tmp_Fy = np.array([[F_gravity_y[line]], [F_pressure_y[line]], [F_magnetic_y[line]], [F_centrifugal_y[line]], [F_correction_y[line]], [F_total_y[line]]] )
+        tmp_Fx = tmp_Fx*(r[line]**(2.))
+        tmp_Fy = tmp_Fy*(r[line]**(2.))        
         
         tmp_x = (np.empty((NUMBER_OF_FORCES,1))[0:NUMBER_OF_FORCES])
         tmp_x[0:NUMBER_OF_FORCES] = r[line]*np.sin(theta[line])
@@ -247,7 +264,7 @@ for index3 in range(0,len(coord_index)):
         x = np.append(x, tmp_x, axis=0)
         y = np.append(y, tmp_y, axis=0) 
         #print('LOOP2 F_x', np.shape(F_x), F_x, 'Index: ', index3)
-        
+    
         
 plotarrows()
 plotforces()
