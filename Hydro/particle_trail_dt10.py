@@ -26,13 +26,13 @@ ymax = 100.#*1477000.
 xmin = 0.#*1477000.
 xmax = 100.#*1477000.
 resolution = 100.
-gSTART_x = 10
-gSTART_y = 20
+gSTART_x = 69
+gSTART_y = 80
 gSTART_INDEX = 1000
 gLAST_INDEX = 1499
 
 savefilename = '/Users/Anton/Desktop/Data/Binaries/hydro_particle_' + str(gSTART_INDEX) + '_' + str(gSTART_x)+'_'+str(gSTART_y)+'_dt10.npy'
-onlyplot = False
+onlyplot = True
 
 
 def plotarrows():
@@ -56,8 +56,8 @@ def plotarrows():
     
     plt.gca().set_aspect('equal')    
     plt.title('Trajectory over time: ' + str(len(COORDINATES)*10))
-    plt.xlabel('$r/r_g$')
-    plt.ylabel('$r/r_g$')
+    plt.xlabel('$x/r_g$')
+    plt.ylabel('$z/r_g$')
     plt.show()
     plt.savefig('/Users/Anton/Dropbox/Aleksander/Figures/simavg0070-0134/particles/particle_'+ str(gSTART_INDEX) +'_'+ str(gSTART_x)+'_'+str(gSTART_y)+'_dt10', bbox_inches='tight') 
 
@@ -77,8 +77,8 @@ def iterate():
     coord_y = START_y
     
     for fileindex in range(starting_index,last_index):
-    #for loop_index in range(0,120):    
-        #fileindex = starting_index - loop_index
+    #for loop_index in range(0,400):    
+     #   fileindex = starting_index - loop_index
         
         grid_y, grid_x = np.mgrid[coord_y:coord_y:1j,coord_x:coord_x:1j]
 
@@ -132,16 +132,6 @@ def iterate():
             break
             
         print('Index:', fileindex, COORDINATES)
-        #u_radial_START = grid_u_radial()
-        #plt.contourf(grid_x, grid_y, grid_u_radial)
-        #
-        #s = plt.streamplot(grid_x, grid_y, grid_ux, grid_uy, 
-        #        density=1, color='#BBBBBB', 
-        #        arrowsize=2.5, arrowstyle='->',
-        #        minlength=.1)
-        #
-        #plt.gca().set_aspect('equal')    
-        #plt.show()
     np.save(savefilename, COORDINATES)
     
 if onlyplot == True:

@@ -44,7 +44,7 @@ def plotarrows():
     ypmin = 0
     ypmax = 100
     xpmin = 0
-    xpmax = 50
+    xpmax = 100
         
     plt.xlim(xmin=xpmin, xmax=xpmax)
     plt.ylim(ymin=ypmin, ymax=ypmax)
@@ -81,8 +81,8 @@ xmin = 0.#*1477000.
 xmax = 100.#*1477000.
 resolution = 100.
 
-gSTART_x = 40
-gSTART_y = 30
+gSTART_x = 69
+gSTART_y = 80
 gSTART_INDEX = 1000
 
 savefilename = '/Users/Anton/Desktop/Data/Binaries/hydro_particle_'+str(gSTART_INDEX)+ '_' + str(gSTART_x)+'_'+str(gSTART_y)+'_dt10.npy'
@@ -105,8 +105,12 @@ except (IndexError, IOError):
     
 COORDINATES = np.load(savefilename)
 step = len(COORDINATES)/4.
+###### --------------------------------------------------------------------------------- ########
 #coord_index = np.floor(np.array([0.64*step, 1.45*step, 2.4*step])) #(15,20)
-coord_index = np.floor(np.array([0.48*step, 1.45*step, 2.4*step])) #(10,20) 
+#coord_index = np.floor(np.array([0.48*step, 1.45*step, 2.4*step])) #(10,20) 
+coord_index = np.floor(np.array([0.01*step, 1.3*step, 2.8*step])) #(50,90)
+#coord_index = np.floor(np.array([0.68*step, 1.5*step, 2.3*step])) #(40,30) 
+###### --------------------------------------------------------------------------------- ########
 LINE_INDEX = np.empty((len(coord_index), 1))
 
 for i in range(0,len(coord_index)):
@@ -124,7 +128,7 @@ x = np.empty((NUMBER_OF_FORCES,1))
 y = np.empty((NUMBER_OF_FORCES,1))
 
 B_NUMBER = np.empty((len(coord_index),1))
-mFileinB = open(filebase + 'sim' + str(int(filenumber_start + len(COORDINATES)-3)) + '.dat','rb') 
+mFileinB = open(filebase + 'sim' + str(int(filenumber_start + len(COORDINATES)-1)) + '.dat','rb') 
 mDatainB = np.loadtxt(mFileinB,fv.input_dtype.dtype_rel_hydro())
 mFileinB.close()
 B_NUMBER_FINAL_I = dataindex(COORDINATES[len(COORDINATES)-1][0],COORDINATES[len(COORDINATES)-1][1], mDatain)
