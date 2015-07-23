@@ -26,7 +26,7 @@ ymax = 100.#*1477000.
 xmin = 0.#*1477000.
 xmax = 100.#*1477000.
 resolution = 100.
-gSTART_x = 15
+gSTART_x = 10
 gSTART_y = 20
 gSTART_INDEX = 1000
 gLAST_INDEX = 1499
@@ -78,7 +78,7 @@ def iterate():
     
     for fileindex in range(starting_index,last_index):
     #for loop_index in range(0,120):    
-     #   fileindex = starting_index - loop_index
+        #fileindex = starting_index - loop_index
         
         grid_y, grid_x = np.mgrid[coord_y:coord_y:1j,coord_x:coord_x:1j]
 

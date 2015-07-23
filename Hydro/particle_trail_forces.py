@@ -24,9 +24,18 @@ def dataindex(x_loc,y_loc,datain_loc):
     return np.nanargmin((np.abs(datain_loc['r']-(radius)) + np.abs(datain_loc ['theta']-(angle))), axis=0)
     
 def plotforces():
-     plt.quiver(x,y,F_x,F_y, 
-            color=['blue', 'green', 'darkmagenta', 'red', 'cyan', 'black'], scale=5)
-     #plt.show()
+     colors = np.array(['blue', 'green', 'darkmagenta', 'red', 'cyan', 'black'])
+     plt.quiver(x,y,F_x,F_y, color=colors, edgecolor=colors, linewidth=2 ,scale=6, headwidth=5, headlength=8, zorder=10)
+     
+     text = 'Be=' + str(np.round(B_NUMBER_FINAL_V, decimals=5))
+     plt.annotate(s=text, xy=(x_BF+7, y_BF-5), fontsize='x-small')
+     
+     for i in range(0, len(coord_index)):
+         text = 'Be=' + str(np.round(B_NUMBER[i][0], decimals=5))
+         plt.annotate(s=text, xy=(x[i*NUMBER_OF_FORCES]+7, y[i*NUMBER_OF_FORCES]+3), fontsize='x-small')
+         
+     
+     plt.show()
      plt.savefig('/Users/Anton/Dropbox/Aleksander/Figures/simavg0070-0134/particles/particle_forces_' + str(gSTART_INDEX) + '_' + str(gSTART_x)+'_'+str(gSTART_y)+ '_dt10', bbox_inches='tight')
 
 def plotarrows():
@@ -34,8 +43,8 @@ def plotarrows():
     plt.rc('text', usetex=True)
     ypmin = 0
     ypmax = 100
-    xpmin = 20
-    xpmax = 70
+    xpmin = 0
+    xpmax = 50
         
     plt.xlim(xmin=xpmin, xmax=xpmax)
     plt.ylim(ymin=ypmin, ymax=ypmax)
@@ -61,9 +70,9 @@ def plotarrows():
         #    plt.arrow(COORDINATES[i,0], COORDINATES[i,1], (COORDINATES[i+1,0] - COORDINATES[i,0]), (COORDINATES[i+1,1] - COORDINATES[i,1]))
     
     plt.gca().set_aspect('equal')    
-    plt.title('Trajectory over time: ' + str(len(COORDINATES)*10))
-    plt.xlabel('$r/r_g$')
-    plt.ylabel('$r/r_g$')
+    #plt.title('Trajectory over time: ' + str(len(COORDINATES)*10))
+    plt.xlabel('$x/r_g$')
+    plt.ylabel('$z/r_g$')
 
 
 ymin = 0.#*1477000.
@@ -76,11 +85,12 @@ gSTART_x = 40
 gSTART_y = 30
 gSTART_INDEX = 1000
 
-savefilename = '/Users/Anton/Desktop/Data/Binaries/hydro_particle_'+str(gSTART_INDEX)+ '_' + str(gSTART_x)+'_'+str(gSTART_y)+'.npy'
+savefilename = '/Users/Anton/Desktop/Data/Binaries/hydro_particle_'+str(gSTART_INDEX)+ '_' + str(gSTART_x)+'_'+str(gSTART_y)+'_dt10.npy'
 
     
 #File operations
-filebase = '/Users/Anton/Desktop/Data/hd300a0/hd300a0_rel/'
+#filebase = '/Users/Anton/Desktop/Data/hd300a0/hd300a0_rel/'
+filebase = '/Volumes/Seagate/4Anton/hd300a0/dt10/'
 filenumber_start = gSTART_INDEX
 filenumber = filenumber_start
 
@@ -89,17 +99,22 @@ try:
     #filein = open(filebase + 'simavg0070-0134_rel.dat', 'rb')
     datain = np.loadtxt(filein,fv.input_dtype.dtype_rel_hydro())
     filein.close()
-except IndexError:
+except (IndexError, IOError):
     print('Wrong input dtype. Terminating.')
     exit()
     
 COORDINATES = np.load(savefilename)
 step = len(COORDINATES)/4.
-coord_index = np.floor(np.array([0.75*step, 1.5*step, 2.25*step, 3.*step]))
+#coord_index = np.floor(np.array([0.64*step, 1.45*step, 2.4*step])) #(15,20)
+coord_index = np.floor(np.array([0.48*step, 1.45*step, 2.4*step])) #(10,20) 
 LINE_INDEX = np.empty((len(coord_index), 1))
+
 for i in range(0,len(coord_index)):
+    mFilein = open(filebase + 'sim' + str(int(filenumber_start + coord_index[i])) + '.dat','rb') 
     tmp = COORDINATES[coord_index[i]]
-    LINE_INDEX[i] = dataindex(tmp[0],tmp[1], datain)
+    mDatain = np.loadtxt(mFilein,fv.input_dtype.dtype_rel_hydro())
+    mFilein.close()
+    LINE_INDEX[i] = dataindex(tmp[0],tmp[1], mDatain)
     
     
 NUMBER_OF_FORCES = 6    
@@ -107,6 +122,15 @@ F_x = np.empty((NUMBER_OF_FORCES,1))
 F_y = np.empty((NUMBER_OF_FORCES,1))
 x = np.empty((NUMBER_OF_FORCES,1))
 y = np.empty((NUMBER_OF_FORCES,1))
+
+B_NUMBER = np.empty((len(coord_index),1))
+mFileinB = open(filebase + 'sim' + str(int(filenumber_start + len(COORDINATES)-3)) + '.dat','rb') 
+mDatainB = np.loadtxt(mFileinB,fv.input_dtype.dtype_rel_hydro())
+mFileinB.close()
+B_NUMBER_FINAL_I = dataindex(COORDINATES[len(COORDINATES)-1][0],COORDINATES[len(COORDINATES)-1][1], mDatain)
+B_NUMBER_FINAL_V = -((mDatainB['T_00'][B_NUMBER_FINAL_I]+0+mDatainB['rho'][B_NUMBER_FINAL_I]*mDatainB['u_t'][B_NUMBER_FINAL_I])/(mDatainB['rho'][B_NUMBER_FINAL_I]*mDatainB['u_t'][B_NUMBER_FINAL_I]))
+x_BF = mDatainB['r'][B_NUMBER_FINAL_I]*np.sin(mDatainB['theta'][B_NUMBER_FINAL_I])
+y_BF = mDatainB['r'][B_NUMBER_FINAL_I]*np.cos(mDatainB['theta'][B_NUMBER_FINAL_I])
 
 
 for index3 in range(0,len(coord_index)):
@@ -160,11 +184,14 @@ for index3 in range(0,len(coord_index)):
     w = rho+datain['u_internal']+((5./3.)-1)*datain['u_internal']+datain['bsq']
     
     ## Velocities ##
-    u_radial = (datain['u_1']/datain['u_t'])
-    u_theta = (datain['u_2']/datain['u_t'])
-    u_phi = (datain['u_3']/datain['u_t'])
+    u_time = (datain['u_t'])
+    u_radial = (datain['u_1']/u_time)
+    u_theta = (datain['u_2']/u_time)
+    u_phi = (datain['u_3']/u_time)
         
     line = int(LINE_INDEX[index3,0])
+    
+    B_NUMBER[index3] = -((T00[line]+0+rho[line]*u_time[line])/(rho[line]*u_time[line]))
     
     ####### Forces ########
     ## Gravitational force ##
