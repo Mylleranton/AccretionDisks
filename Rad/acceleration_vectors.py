@@ -27,7 +27,7 @@ grid_y = grid_y
 grid_x = grid_x
 
 ## Loop through all simulation files
-for index in range(700,701):
+for index in range(1501,1502):
     if index < 1000:
         index_str = str('0' + str(index))
     else:
@@ -35,15 +35,15 @@ for index in range(700,701):
     
     #File operations
     filename = 'sim' + index_str
-    filein = open('/Users/Anton/Desktop/Data/d300a0/simavg0100-0189_rel.dat','rb')
-    #filein = open('/Volumes/Seagate/4Anton/d300a0/' + filename + '.dat','rb')
+    #filein = open('/Users/Anton/Desktop/Data/d300a0/simavg0100-0189_rel.dat','rb')
+    filein = open('/Users/Anton/Desktop/Data/d300a0/' + filename + '.dat','rb')
     #datafile_all_forces = '/Users/Anton/Desktop/Data/Binaries/RAD-600-d300a0/' + index_str + '.npy'
     #datafile_all_forces = '/Users/Anton/Desktop/Data/Binaries/RAD-avg-d300a0/average.npy'
 
 
     #fileout = '/Users/Anton/Desktop/Data/Image/' + filename + '.png'
     
-    datain = np.loadtxt(filein,input_dtype.dtype_rel_hydro())
+    datain = np.loadtxt(filein,input_dtype.dtype_rel_radiation())
     filein.close()
     
     #Convert coordinates from spherical to cartesian (physical units)
@@ -110,7 +110,8 @@ for index in range(700,701):
     #plt.ylabel('$r/r_g$')
     plt.tick_params(axis='both', which='both', bottom='on', top='off', labelbottom='on', right='off', left='off', labelleft='off')
 
-    fileout = '/Users/Anton/Dropbox/Aleksander/Figures/simavg0100-0189/density_velocities.png'
+    fileout = '/Users/Anton/Dropbox/Aleksander/Figures/simavg0100-0189/density_velocities_'+filename+'.png'
+    #fileout = '/Users/Anton/Dropbox/Aleksander/Figures/simavg0100-0189/density_velocities.png'
     plt.savefig(fileout, bbox_inches='tight')#, bbox_extra_artists=[cax]) 
     
     fig.show()
