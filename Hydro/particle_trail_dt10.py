@@ -58,6 +58,7 @@ def plotarrows():
     plt.title('Trajectory over time: ' + str(len(COORDINATES)*10))
     plt.xlabel('$x/r_g$')
     plt.ylabel('$z/r_g$')
+
     plt.show()
     plt.savefig('/Users/Anton/Dropbox/Aleksander/Figures/simavg0070-0134/particles/particle_'+ str(gSTART_INDEX) +'_'+ str(gSTART_x)+'_'+str(gSTART_y)+'_dt10', bbox_inches='tight') 
 

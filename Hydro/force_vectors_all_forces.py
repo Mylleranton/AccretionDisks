@@ -52,6 +52,7 @@ def gradient_theta(function, line):
             tmp_gradt[index] = (function[index+252]-function[index-252])/(theta[index+252]-theta[index-252])
     return tmp_gradt
     
+    
 # Create meshgrid (in units of gravitational radii, then converted to physical)
 ymin = 0
 ymax = 100
@@ -63,7 +64,7 @@ grid_y = grid_y
 grid_x = grid_x
 
 ## Loop through all simulation files
-for index in range(700,701):
+for index in range(700,700):
     if index < 1000:
         index_str = str('0' + str(index))
     else:

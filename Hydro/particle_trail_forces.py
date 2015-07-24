@@ -5,12 +5,20 @@ import matplotlib
 import os
 import numpy as np
 from christoffel_symbols import christoffel as ch
-import force_vectors_all_forces as fv 
+import STATIC_DTYPE as dt 
+#from force_vectors_all_forces import gradient_radial as gradient_radial
+#from force_vectors_all_forces import gradient_theta as gradient_theta
 
 matplotlib.rcdefaults()
 matplotlib.rc('font',**{'family':'serif','size':16})
 os.environ['PATH'] = os.environ['PATH'] + ':/opt/local/bin'
 os.environ['PATH']
+
+def gradient_radial(function, mR, line):
+    return (function[line+1]-function[line-1])/(mR[line+1]-mR[line-1])
+
+def gradient_theta(function, mTheta, line):
+    return (function[line+252]-function[line-252])/(mTheta[line+252]-mTheta[line-252])
 
 def dataindex(x_loc,y_loc,datain_loc):
     x_loc = float(x_loc)
@@ -25,16 +33,17 @@ def dataindex(x_loc,y_loc,datain_loc):
     
 def plotforces():
      colors = np.array(['blue', 'green', 'darkmagenta', 'red', 'cyan', 'black'])
-     plt.quiver(x,y,F_x,F_y, color=colors, edgecolor=colors, linewidth=2 ,scale=6, headwidth=5, headlength=8, zorder=10)
+     plt.quiver(x,y,F_x,F_y, color=colors, edgecolor=colors, linewidth=2 ,scale=7, headwidth=5, headlength=8, zorder=10)
      
-     text = 'Be=' + str(np.round(B_NUMBER_FINAL_V, decimals=5))
-     plt.annotate(s=text, xy=(x_BF+7, y_BF-5), fontsize='x-small')
+     text = 'Be = ' + str(np.round(B_NUMBER_FINAL_V, decimals=5))
+     plt.annotate(s=text, xy=(x_BF+10, y_BF-5), fontsize='small')
      
      for i in range(0, len(coord_index)):
          text = 'Be=' + str(np.round(B_NUMBER[i][0], decimals=5))
-         plt.annotate(s=text, xy=(x[i*NUMBER_OF_FORCES]+7, y[i*NUMBER_OF_FORCES]+3), fontsize='x-small')
+         plt.annotate(s=text, xy=(x[i*NUMBER_OF_FORCES]+7, y[i*NUMBER_OF_FORCES]+3), fontsize='small')
          
-     
+     plt.tick_params(axis='both', which='both', bottom='on', top='on', labelbottom='on', right='on', left='on', labelright='off', labelleft='off')
+
      plt.show()
      plt.savefig('/Users/Anton/Dropbox/Aleksander/Figures/simavg0070-0134/particles/particle_forces_' + str(gSTART_INDEX) + '_' + str(gSTART_x)+'_'+str(gSTART_y)+ '_dt10', bbox_inches='tight')
 
@@ -43,8 +52,8 @@ def plotarrows():
     plt.rc('text', usetex=True)
     ypmin = 0
     ypmax = 100
-    xpmin = 0
-    xpmax = 100
+    xpmin = 10
+    xpmax = 80
         
     plt.xlim(xmin=xpmin, xmax=xpmax)
     plt.ylim(ymin=ypmin, ymax=ypmax)
@@ -72,7 +81,7 @@ def plotarrows():
     plt.gca().set_aspect('equal')    
     #plt.title('Trajectory over time: ' + str(len(COORDINATES)*10))
     plt.xlabel('$x/r_g$')
-    plt.ylabel('$z/r_g$')
+    #plt.ylabel('$z/r_g$')
 
 
 ymin = 0.#*1477000.
@@ -81,8 +90,8 @@ xmin = 0.#*1477000.
 xmax = 100.#*1477000.
 resolution = 100.
 
-gSTART_x = 69
-gSTART_y = 80
+gSTART_x = 50
+gSTART_y = 90
 gSTART_INDEX = 1000
 
 savefilename = '/Users/Anton/Desktop/Data/Binaries/hydro_particle_'+str(gSTART_INDEX)+ '_' + str(gSTART_x)+'_'+str(gSTART_y)+'_dt10.npy'
@@ -97,7 +106,7 @@ filenumber = filenumber_start
 try:
     filein = open(filebase + 'sim' + str(filenumber) + '.dat','rb')
     #filein = open(filebase + 'simavg0070-0134_rel.dat', 'rb')
-    datain = np.loadtxt(filein,fv.input_dtype.dtype_rel_hydro())
+    datain = np.loadtxt(filein,dt.dtype_rel_hydro())
     filein.close()
 except (IndexError, IOError):
     print('Wrong input dtype. Terminating.')
@@ -106,17 +115,17 @@ except (IndexError, IOError):
 COORDINATES = np.load(savefilename)
 step = len(COORDINATES)/4.
 ###### --------------------------------------------------------------------------------- ########
-#coord_index = np.floor(np.array([0.64*step, 1.45*step, 2.4*step])) #(15,20)
-#coord_index = np.floor(np.array([0.48*step, 1.45*step, 2.4*step])) #(10,20) 
-coord_index = np.floor(np.array([0.01*step, 1.3*step, 2.8*step])) #(50,90)
-#coord_index = np.floor(np.array([0.68*step, 1.5*step, 2.3*step])) #(40,30) 
+#coord_index = np.floor(np.array([0.64*step, 2.4*step])) #(15,20) 1.45*step, 
+#coord_index = np.floor(np.array([0.48*step, 2.4*step])) #(10,20) 1.45*step
+#coord_index = np.floor(np.array([0.57*step, 1.7*step, 2.8*step])) #(69,80)
+coord_index = np.floor(np.array([0.05*step, 1.*step, 2.3*step])) #(40,30) 
 ###### --------------------------------------------------------------------------------- ########
 LINE_INDEX = np.empty((len(coord_index), 1))
 
 for i in range(0,len(coord_index)):
     mFilein = open(filebase + 'sim' + str(int(filenumber_start + coord_index[i])) + '.dat','rb') 
     tmp = COORDINATES[coord_index[i]]
-    mDatain = np.loadtxt(mFilein,fv.input_dtype.dtype_rel_hydro())
+    mDatain = np.loadtxt(mFilein,dt.dtype_rel_hydro())
     mFilein.close()
     LINE_INDEX[i] = dataindex(tmp[0],tmp[1], mDatain)
     
@@ -129,7 +138,7 @@ y = np.empty((NUMBER_OF_FORCES,1))
 
 B_NUMBER = np.empty((len(coord_index),1))
 mFileinB = open(filebase + 'sim' + str(int(filenumber_start + len(COORDINATES)-1)) + '.dat','rb') 
-mDatainB = np.loadtxt(mFileinB,fv.input_dtype.dtype_rel_hydro())
+mDatainB = np.loadtxt(mFileinB,dt.dtype_rel_hydro())
 mFileinB.close()
 B_NUMBER_FINAL_I = dataindex(COORDINATES[len(COORDINATES)-1][0],COORDINATES[len(COORDINATES)-1][1], mDatain)
 B_NUMBER_FINAL_V = -((mDatainB['T_00'][B_NUMBER_FINAL_I]+0+mDatainB['rho'][B_NUMBER_FINAL_I]*mDatainB['u_t'][B_NUMBER_FINAL_I])/(mDatainB['rho'][B_NUMBER_FINAL_I]*mDatainB['u_t'][B_NUMBER_FINAL_I]))
@@ -142,7 +151,7 @@ for index3 in range(0,len(coord_index)):
     filein = open(filebase + 'sim' + str(filenumber) + '.dat','rb')
     #print('Loaded file: ', filenumber, 'with index: ', index3)
     #continue
-    datain = np.loadtxt(filein,fv.input_dtype.dtype_rel_hydro())
+    datain = np.loadtxt(filein,dt.dtype_rel_hydro())
     filein.close()   
 
     ########### ------------------------------------------------------------------------------------ ###########
@@ -224,7 +233,7 @@ for index3 in range(0,len(coord_index)):
     ## Relativistic correction
     F_rel_corr_radial = F_metric_radial - F_gravity_radial - F_centrifugal_radial 
     F_rel_corr_theta = F_metric_theta - F_gravity_theta - F_centrifugal_theta  
-    corr_gradients = fv.gradient_radial((w-rho)*u_radial, line) + fv.gradient_theta((w-rho)*u_theta, line)
+    corr_gradients = gradient_radial((w-rho)*u_radial, r, line) + gradient_theta((w-rho)*u_theta, theta, line)
     F_enth_corr_radial = -(1./w)*u_radial*g11*corr_gradients
     F_enth_corr_theta = -(1./w)*u_theta*g22*corr_gradients/r
     F_correction_radial = F_rel_corr_radial + F_enth_corr_radial
@@ -241,16 +250,16 @@ for index3 in range(0,len(coord_index)):
     
     ## Thermal force (gas pressure) ##
     gas_pressure = ((5./3.)-1.)*datain['u_internal']
-    F_pressure_radial = -(1./w)*fv.gradient_radial(gas_pressure, line)
-    F_pressure_theta = -(1./w)*fv.gradient_theta(gas_pressure, line)/r
+    F_pressure_radial = -(1./w)*gradient_radial(gas_pressure, r, line)
+    F_pressure_theta = -(1./w)*gradient_theta(gas_pressure, theta, line)/r
     F_pressure_x = (F_pressure_radial*np.sin(theta) + F_pressure_theta*np.cos(theta))
     F_pressure_y = (F_pressure_radial*np.cos(theta) - F_pressure_theta*np.sin(theta))
     
     ## Magnetic force ##
-    F_magnetic_tension_radial = (1./w)*(fv.gradient_radial(datain['b_1']*datain['b_1']*g11, line)+fv.gradient_theta(datain['b_2']*datain['b_1']*g11, line))
-    F_magnetic_tension_theta = (1./w)*(fv.gradient_radial(datain['b_1']*datain['b_2']*g22, line)+fv.gradient_theta(datain['b_2']*datain['b_2']*g22, line))/r
-    F_magnetic_pressure_radial = -(1./w)*fv.gradient_radial(datain['bsq']/2., line)
-    F_magnetic_pressure_theta = -(1./w)*fv.gradient_theta(datain['bsq']/2., line)/r    
+    F_magnetic_tension_radial = (1./w)*(gradient_radial(datain['b_1']*datain['b_1']*g11, r, line)+gradient_theta(datain['b_2']*datain['b_1']*g11, theta, line))
+    F_magnetic_tension_theta = (1./w)*(gradient_radial(datain['b_1']*datain['b_2']*g22, r, line)+gradient_theta(datain['b_2']*datain['b_2']*g22, theta, line))/r
+    F_magnetic_pressure_radial = -(1./w)*gradient_radial(datain['bsq']/2., r, line)
+    F_magnetic_pressure_theta = -(1./w)*gradient_theta(datain['bsq']/2., theta, line)/r    
     F_magnetic_radial = F_magnetic_pressure_radial + F_magnetic_tension_radial
     F_magnetic_theta = F_magnetic_pressure_theta + F_magnetic_tension_theta
     F_magnetic_x = (F_magnetic_theta*np.cos(theta) + F_magnetic_radial*np.sin(theta))
