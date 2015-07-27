@@ -27,16 +27,16 @@ grid_y = grid_y
 grid_x = grid_x
 
 ## Loop through all simulation files
-for index in range(1501,1502):
+for index in range(1120,1121):
     if index < 1000:
         index_str = str('0' + str(index))
     else:
         index_str = str(index)
     
     #File operations
-    filename = 'sim' + index_str
-    #filein = open('/Users/Anton/Desktop/Data/d300a0/simavg0100-0189_rel.dat','rb')
-    filein = open('/Users/Anton/Desktop/Data/d300a0/' + filename + '.dat','rb')
+    filename = 'simext' + index_str
+    filein = open('/Volumes/Seagate/4Anton/d300a0/dt100/simavg0100-0189_rel.dat','rb')
+    #filein = open('/Volumes/Seagate/4Anton/d300a0/dt10/'+filename+'.dat','rb')
     #datafile_all_forces = '/Users/Anton/Desktop/Data/Binaries/RAD-600-d300a0/' + index_str + '.npy'
     #datafile_all_forces = '/Users/Anton/Desktop/Data/Binaries/RAD-avg-d300a0/average.npy'
 
@@ -92,11 +92,11 @@ for index in range(1501,1502):
     plt.xlim(xmin=xmin, xmax=xmax)
     plt.ylim(ymin=ymin, ymax=ymax)
     
-    c = plt.contourf(grid_x, grid_y, np.log10(grid_rho), extend='both', levels=np.linspace(-25,-19,61), cmap='gray', alpha=0.5)
-    #cax, args = matplotlib.colorbar.make_axes(ax, location='left', pad=0.125)
-    bar = fig.colorbar(c)#, cax=cax)
-    #bar.ax.yaxis.set_ticks_position('left')
-    #plt.sca(ax)
+    c = plt.contourf(grid_x, grid_y, np.log10(grid_rho*6.17e15), extend='both', levels=np.linspace(-11,-3,61), cmap='gray', alpha=0.5)
+    cax, args = matplotlib.colorbar.make_axes(ax, location='top', shrink=0.45)
+    bar = fig.colorbar(c, cax=cax, ticks=np.linspace(-11,-3,5).astype(int), orientation='horizontal')
+    bar.ax.xaxis.set_ticks_position('top')    
+    plt.sca(ax)
     
     lw = 1+grid_u_magnitude*10.
     s = plt.streamplot(grid_x, grid_y, grid_ux, grid_uy, 
@@ -106,15 +106,15 @@ for index in range(1501,1502):
         
     ax.set_aspect('equal')
     #plt.title('Density and velocites')
-    plt.xlabel('$r/r_g$')
+    plt.xlabel('$x/r_g$')
     #plt.ylabel('$r/r_g$')
     plt.tick_params(axis='both', which='both', bottom='on', top='off', labelbottom='on', right='off', left='off', labelleft='off')
 
-    fileout = '/Users/Anton/Dropbox/Aleksander/Figures/simavg0100-0189/density_velocities_'+filename+'.png'
-    #fileout = '/Users/Anton/Dropbox/Aleksander/Figures/simavg0100-0189/density_velocities.png'
-    plt.savefig(fileout, bbox_inches='tight')#, bbox_extra_artists=[cax]) 
+    #fileout = '/Users/Anton/Dropbox/Aleksander/Figures/simavg0100-0189/density_velocities_'+filename+'.png'
+    fileout = '/Users/Anton/Dropbox/Aleksander/Figures/simavg0100-0189/density_velocities.png'
+    plt.savefig(fileout, bbox_inches='tight') 
     
-    fig.show()
+    plt.show()
 
     
     print('Index:' + index_str)

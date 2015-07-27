@@ -36,13 +36,17 @@ def plotforces():
      plt.quiver(x,y,F_x,F_y, color=colors, edgecolor=colors, linewidth=2 ,scale=7, headwidth=5, headlength=8, zorder=10)
      
      text = 'Be = ' + str(np.round(B_NUMBER_FINAL_V, decimals=5))
-     plt.annotate(s=text, xy=(x_BF+10, y_BF-5), fontsize='small')
+     plt.annotate(s=text, xy=(x_BF+8, y_BF-5), fontsize='small')
      
      for i in range(0, len(coord_index)):
-         text = 'Be=' + str(np.round(B_NUMBER[i][0], decimals=5))
-         plt.annotate(s=text, xy=(x[i*NUMBER_OF_FORCES]+7, y[i*NUMBER_OF_FORCES]+3), fontsize='small')
+         text = 'Be = ' + str(np.round(B_NUMBER[i][0], decimals=5))
+         xdiff = 8
+         #if i == 2:
+         #    xdiff = 3
          
-     plt.tick_params(axis='both', which='both', bottom='on', top='on', labelbottom='on', right='on', left='on', labelright='off', labelleft='off')
+         plt.annotate(s=text, xy=(x[i*NUMBER_OF_FORCES]+xdiff, y[i*NUMBER_OF_FORCES]+3), fontsize='small')
+         
+     plt.tick_params(axis='both', which='both', bottom='on', top='on', labelbottom='on', right='on', left='on', labelright='off', labelleft='on')
 
      plt.show()
      plt.savefig('/Users/Anton/Dropbox/Aleksander/Figures/simavg0070-0134/particles/particle_forces_' + str(gSTART_INDEX) + '_' + str(gSTART_x)+'_'+str(gSTART_y)+ '_dt10', bbox_inches='tight')
@@ -52,8 +56,8 @@ def plotarrows():
     plt.rc('text', usetex=True)
     ypmin = 0
     ypmax = 100
-    xpmin = 10
-    xpmax = 80
+    xpmin = 20
+    xpmax = 90
         
     plt.xlim(xmin=xpmin, xmax=xpmax)
     plt.ylim(ymin=ypmin, ymax=ypmax)
@@ -65,6 +69,7 @@ def plotarrows():
     lc = LineCollection(segments, linewidths=lw, colors=['grey']) #, cmap='gist_heat_r')
     #lc.set_array(lw)
     plt.gca().add_collection(lc)
+
     
     
     #lw = 0.5+COORDINATES[:,2]*100.
@@ -110,15 +115,14 @@ try:
     filein.close()
 except (IndexError, IOError):
     print('Wrong input dtype. Terminating.')
-    exit()
-    
+        
 COORDINATES = np.load(savefilename)
 step = len(COORDINATES)/4.
 ###### --------------------------------------------------------------------------------- ########
 #coord_index = np.floor(np.array([0.64*step, 2.4*step])) #(15,20) 1.45*step, 
 #coord_index = np.floor(np.array([0.48*step, 2.4*step])) #(10,20) 1.45*step
 #coord_index = np.floor(np.array([0.57*step, 1.7*step, 2.8*step])) #(69,80)
-coord_index = np.floor(np.array([0.05*step, 1.*step, 2.3*step])) #(40,30) 
+coord_index = np.floor(np.array([0.05*step, 1.*step, 2.3*step])) #(60,90) 
 ###### --------------------------------------------------------------------------------- ########
 LINE_INDEX = np.empty((len(coord_index), 1))
 

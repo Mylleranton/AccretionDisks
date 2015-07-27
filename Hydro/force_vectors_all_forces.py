@@ -64,7 +64,7 @@ grid_y = grid_y
 grid_x = grid_x
 
 ## Loop through all simulation files
-for index in range(700,700):
+for index in range(700,701):
     if index < 1000:
         index_str = str('0' + str(index))
     else:
@@ -74,7 +74,7 @@ for index in range(700,700):
     
     #File operations
     filename = 'sim' + index_str
-    filein = open('/Users/Anton/Desktop/Data/hd300a0/hd300a0_rel/simavg0070-0134_rel.dat','rb')
+    filein = open('/Volumes/Seagate/4Anton/hd300a0/dt100/simavg0070-0134_rel.dat','rb')
     #filein = open('/Volumes/Seagate/4Anton/d300a0/' + filename + '.dat','rb')
     #datafile_all_forces = '/Users/Anton/Desktop/Data/Binaries/RAD-600-d300a0/' + index_str + '.npy'
     #datafile_all_forces = '/Users/Anton/Desktop/Data/Binaries/RAD-avg-d300a0/average.npy'
@@ -269,7 +269,8 @@ for index in range(700,700):
     #grid_gas_pressure = griddata(points, gas_pressure, (grid_x, grid_y), method='linear')
     #grid_u_magnitude = griddata(points, np.sqrt(u_radial*u_radial + u_theta*u_theta*g22*g22), (grid_x, grid_y), method='linear')
     
-    plt.figure()
+    fig = plt.figure()
+    ax = fig.gca()
     plt.rc('text', usetex=True)
     
     ymin = 0
@@ -283,8 +284,12 @@ for index in range(700,700):
     #c = plt.contourf(grid_x, grid_y, grid_u_magnitude, extend='both', levels=np.linspace(0,0.1,26), cmap='YlOrRd_r', alpha=0.3)
     #c = plt.contourf(grid_x, grid_y, grid_ehat, extend='both', levels=np.linspace(1e-20,9e-24,150), cmap='YlOrRd_r', alpha=0.3)
     c = plt.contourf(grid_x, grid_y, np.log10(grid_bsq_rho), extend='both', levels=np.linspace(-3,1,21), cmap='gray', alpha=0.3)
-    plt.colorbar(c)
     
+    cax, args = matplotlib.colorbar.make_axes(ax, location='top', shrink=0.45)
+    bar = fig.colorbar(c, cax=cax, ticks=np.linspace(-3,1,5), orientation='horizontal')
+    bar.ax.xaxis.set_ticks_position('top')    
+    plt.sca(ax)
+        
     plt.quiver(x,y,F_x,F_y, 
             color=['blue', 'green', 'darkmagenta', 'red', 'cyan', 'black'], scale=.005)
     
@@ -306,15 +311,15 @@ for index in range(700,700):
         
     plt.gca().set_aspect('equal')    
     #plt.title(r'$B^2/ \rho~$ and force distribution')
-    plt.xlabel('$r/r_g$')
+    plt.xlabel('$x/r_g$')
     #plt.ylabel('$r/r_g$')
-    plt.tick_params(axis='both', which='both', bottom='on', top='off', labelbottom='on', right='off', left='off', labelleft='off')
+    plt.tick_params(axis='both', which='both', bottom='on', top='on', labelbottom='on', right='on', left='on', labelleft='off')
     
-    plt.show()
 
     fileout = '/Users/Anton/Dropbox/Aleksander/Figures/simavg0070-0134/all_forces.png'
     plt.savefig(fileout, bbox_inches='tight') 
-    
+    plt.show()
+
     #plt.savefig(fileout)
 
     

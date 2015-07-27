@@ -41,8 +41,8 @@ def plotarrows():
     plt.rc('text', usetex=True)
     ypmin = 0
     ypmax = 100
-    xpmin = 0
-    xpmax = 70
+    xpmin = 10
+    xpmax = 80
         
     plt.xlim(xmin=xpmin, xmax=xpmax)
     plt.ylim(ymin=ypmin, ymax=ypmax)

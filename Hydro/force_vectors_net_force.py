@@ -72,7 +72,7 @@ for index in range(700,701):
     
     #File operations
     filename = 'sim' + index_str
-    filein = open('/Users/Anton/Desktop/Data/hd300a0/hd300a0_rel/simavg0070-0134_rel.dat','rb')
+    filein = open('/Volumes/Seagate/4Anton/hd300a0/dt100/simavg0070-0134_rel.dat','rb')
     #filein = open('/Volumes/Seagate/4Anton/d300a0/' + filename + '.dat','rb')
     #datafile_all_forces = '/Users/Anton/Desktop/Data/Binaries/RAD-600-d300a0/' + index_str + '.npy'
     #datafile_all_forces = '/Users/Anton/Desktop/Data/Binaries/RAD-avg-d300a0/average.npy'
@@ -260,7 +260,8 @@ for index in range(700,701):
     #grid_ux  = griddata(points, ux, (grid_x, grid_y), method='linear')
     #grid_uy  = griddata(points, uy, (grid_x, grid_y), method='linear')
         
-    plt.figure()
+    fig = plt.figure()
+    ax = fig.gca()
     plt.rc('text', usetex=True)
     
     ymin = 0
@@ -272,7 +273,11 @@ for index in range(700,701):
     plt.ylim(ymin=ymin, ymax=ymax)
     
     c = plt.contourf(grid_x, grid_y, grid_u_magnitude, extend='both', levels=np.linspace(0,0.1,41), cmap='gray', alpha=0.4)
-    plt.colorbar(c, ticks=np.linspace(0,0.1,11))
+    
+    cax, args = matplotlib.colorbar.make_axes(ax, location='top', shrink=0.45)
+    bar = fig.colorbar(c, cax=cax, ticks=np.linspace(0,0.1,5), orientation='horizontal')
+    bar.ax.xaxis.set_ticks_position('top')    
+    plt.sca(ax)
     
 
     #x = r[LINE_INDEX]*np.sin(theta[LINE_INDEX])
@@ -301,7 +306,7 @@ for index in range(700,701):
         
     plt.gca().set_aspect('equal')    
     #plt.title('Velocity and net force')
-    plt.xlabel('$r/r_g$')
+    plt.xlabel('$x/r_g$')
     #plt.ylabel('$r/r_g$')
     plt.tick_params(axis='both', which='both', bottom='on', top='off', labelbottom='on', right='off', left='off', labelleft='off')
 
